@@ -80,6 +80,6 @@ Look in extras folder for a typical pinout and
 ## Who do I talk to? ##
 
  * [Naguissa](https://github.com/Naguissa)
- * https://www.foroelectro.net
+ * https://www.foroelectro.net/electronica-digital-microcontroladores-f8/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html
  * https://www.naguissa.com
 
