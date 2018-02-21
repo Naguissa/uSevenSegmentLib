@@ -32,6 +32,8 @@
 			long int get();
 			void attachInterrupt();
 
+			void zeroFill(bool);
+
 			static void interrupt(void);
 
 			static uSevenSegmentLib *_instance;
@@ -46,6 +48,7 @@
 			int *_muxes;
 			int _pins[8];
 			int _freq = 40;
+			bool _zeroFill = false;
 
 			// Originally defined as common_cathode. Will XOR if common anode
 			unsigned char _mask[10] = {B11111100, B01100000, B11011010, B11110010, B01100110, B10110110, B00111110, B11100000, B11111110, B11100110};

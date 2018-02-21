@@ -56,6 +56,14 @@ void uSevenSegmentLib::attachInterrupt();
 Attaches internal timer interrupts to run multiplexed displays.
 
 
+### Extra: Leading zero fill ###
+
+void uSevenSegmentLib::zeroFill(bool zf);
+
+Parameters:
+ - zf: If true, leading zeros will be displayed instead turning off that displays.
+
+
 
 ## Typical usage: ##
 

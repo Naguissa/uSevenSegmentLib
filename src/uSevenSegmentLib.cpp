@@ -109,7 +109,7 @@ void uSevenSegmentLib::set(long int number) {
 
 	// Clean -- turn off
 	for (i = 0; i < _displays; i++) {
-		_values[i] = _off;
+		_values[i] = _zeroFill ? _mask[0] : _off;
 	}
 
 	// Calculate numbers
@@ -161,7 +161,14 @@ long int uSevenSegmentLib::get() {
 	return value * last;
 }
 
-
+/**
+ * Gets stored number
+ *
+ * @param bool zf If true, leading zeros will be displayed
+ */
+void uSevenSegmentLib::zeroFill(bool zf) {
+	_zeroFill = zf;
+}
 
 
 /**
