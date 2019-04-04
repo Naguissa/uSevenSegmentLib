@@ -91,3 +91,16 @@ Look in extras folder for a typical pinout and
  * https://www.foroelectro.net/electronica-digital-microcontroladores-f8/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html
  * https://www.naguissa.com
 
+
+## Contribute ##
+
+Any code contribution, report or comment are always welcome. Don't hesitate to use GitHub for that.
+
+
+You can make a donation via PayPal: https://paypal.me/foroelectro
+
+
+Thanks for your support.
+
+
+Contributors hall of fame: https://www.foroelectro.net/hall-of-fame-f32/contributors-contribuyentes-t271.html
