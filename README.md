@@ -1,5 +1,8 @@
 # Arduino, ESP8266 and STM32 7-segment multiplexed displays library - uSevenSegmentLib #
 
+Master status:   [![Build Status](https://travis-ci.org/Naguissa/uSevenSegmentLib.svg?branch=master)](https://travis-ci.org/Naguissa/uSevenSegmentLib)
+
+
 ## What is this repository for? ##
 
 Really tiny library to control multiplexed basic 7 segments displays.
