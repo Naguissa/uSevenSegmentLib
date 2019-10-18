@@ -122,7 +122,7 @@ void uSevenSegmentLib::set(long int number) {
 		}
 		// Negative sign?
 		if (number < 0) {
-			if (10 ^ (_displays - 1) < -number) {
+			if ((10 ^ (_displays - 1)) < (-number)) {
 				_values[i] = _minus;
 			}
 		}
