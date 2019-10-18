@@ -11,7 +11,7 @@
  * @copyright Naguissa
  * @author Naguissa
  * @email naguissa.com@gmail.com
- * @version 1.0.0
+ * @version 1.0.1
  * @created 2018-01-27
  */
 #ifndef _uSevenSegmentLib_

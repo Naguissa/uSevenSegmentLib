@@ -11,7 +11,7 @@
  * @copyright Naguissa
  * @author Naguissa
  * @email naguissa.com@gmail.com
- * @version 1.0.0
+ * @version 1.0.1
  * @created 2018-01-27
  */
 #include <Arduino.h>
@@ -139,7 +139,7 @@ long int uSevenSegmentLib::get() {
 	long int value = 0;
 	unsigned char dotMask;
 	unsigned char currentValue;
-	if (_dot = B00000001) {
+	if (_dot == B00000001) {
 		dotMask = ~_dot;
 	} else {
 		dotMask = _dot;
