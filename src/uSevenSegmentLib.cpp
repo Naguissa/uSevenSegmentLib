@@ -11,7 +11,7 @@
  * @copyright Naguissa
  * @author Naguissa
  * @email naguissa.com@gmail.com
- * @version 1.0.1
+ * @version 1.0.0
  * @created 2018-01-27
  */
 #include <Arduino.h>
