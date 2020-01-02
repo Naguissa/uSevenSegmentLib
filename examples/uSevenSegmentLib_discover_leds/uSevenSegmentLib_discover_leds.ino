@@ -1,3 +1,17 @@
+/**
+ * Really tiny library to basic 7 segments displays
+ *
+ * Dicover segments connections utility.
+ *
+ * This example doesn't use any library functionality. It's useful to discover the connections to all segments.
+ * It will light all segments in order to be able to check pins and muxes defintions.
+ * After that, pins and muxes definitions can be copied to your sketch.
+ *
+ * @see <a href="https://github.com/Naguissa/uSevenSegmentLib">https://github.com/Naguissa/uSevenSegmentLib</a>
+ * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
+ * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
+ * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
+ */
 #include "Arduino.h"
 
 // Reverse this to test common annode ones
@@ -13,11 +27,7 @@
 #endif
 
 
-
 unsigned char i;
-
-
-
 
 void setup() {
 	pinMode(mux, OUTPUT);

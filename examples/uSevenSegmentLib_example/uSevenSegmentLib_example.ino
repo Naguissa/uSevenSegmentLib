@@ -1,3 +1,13 @@
+/**
+ * Really tiny library to basic 7 segments displays
+ *
+ * Functionality example
+ *
+ * @see <a href="https://github.com/Naguissa/uSevenSegmentLib">https://github.com/Naguissa/uSevenSegmentLib</a>
+ * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
+ * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
+ * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
+ */
 #include "Arduino.h"
 #include "uSevenSegmentLib.h"
 
@@ -17,14 +27,6 @@ int i = 0;
 
 void setup() {
 	delay (2000);
-	Serial.begin(57600);
-	Serial.println("Serial OK");
-
-	#ifdef _VARIANT_ARDUINO_STM32_
-		Serial.println("Board: STM32");
-	#else
-		Serial.println("Board: Other");
-	#endif
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, led_status);
 
