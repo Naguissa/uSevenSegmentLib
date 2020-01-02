@@ -30,6 +30,14 @@ For manual installation:
  * Rename to uSevenSegmentLib.zip
  * Install library on Arduino
 
+
+## Documentation and extras ##
+
+You can find all documentation and extras in this repository: https://github.com/Naguissa/uSevenSegmentLib_doc_and_extras
+
+Due GitHub limitations HTML documentation is not avaliable online, you need to download the zip.
+
+
 ## Usage ##
 
 Important: Remember to add resistors as needed, depending on your MCU voltage.
