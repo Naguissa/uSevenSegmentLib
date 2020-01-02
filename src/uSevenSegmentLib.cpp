@@ -1,32 +1,36 @@
 /**
- * Really tiny library to basic 7 segments displays
+ * \class uSevenSegmentLib
+ * \brief Really tiny library to basic 7 segments displays
  *
  * 7 segment displays directly controlled from microcontroller
  *
- * Common anode and common cathode allowed.
+ * Common anode and common cathode allowed
  *
  * Uses multiplexed displays for driving as much displays as it can with minimum pins.
  *
+ * Library depends on uTimerLib library, https://github.com/Naguissa/uTimerLib
  *
- * @copyright Naguissa
- * @author Naguissa
- * @email naguissa.com@gmail.com
- * @version 1.0.0
- * @created 2018-01-27
+ * @see <a href="https://github.com/Naguissa/uSevenSegmentLib">https://github.com/Naguissa/uSevenSegmentLib</a>
+ * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
+ * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
+ * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
+ * @version 1.0.2
  */
 #include <Arduino.h>
 #include "uSevenSegmentLib.h"
 
-// Static variable assignment
+/**
+ * \brief Static variable assignment to NULL
+ */
 uSevenSegmentLib * uSevenSegmentLib::_instance = NULL;
 
 
 /**
- * Constructor
+ * \brief Constructor
  *
- * @param unsigned char displays Number of displays
- * @param int[8] array of pins {a, b, c, d, e, f, g, dot}
- * @param int* array of pins for each display
+ * @param displays Number of displays
+ * @param pins array of pins {a, b, c, d, e, f, g, dot}
+ * @param muxes array of common pin for each display
  */
 uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes) {
 	_displays = displays;
@@ -46,12 +50,12 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
 }
 
 /**
- * Constructor
+ * \brief Constructor
  *
- * @param unsigned char displays Number of displays
- * @param int[8] array of pins {a, b, c, d, e, f, g, dot}
- * @param int* array of pins for each display
- * @param bool common_anode Set true to change to common_anode displays
+ * @param displays Number of displays
+ * @param pins array of pins {a, b, c, d, e, f, g, dot}
+ * @param muxes array of common pin for each display
+ * @param common_anode Set true to change to common_anode displays
  */
 uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes, bool common_anode) {
 	if (common_anode) {
@@ -69,12 +73,12 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
 
 
 /**
- * Constructor
+ * \brief Constructor
  *
- * @param unsigned char displays Number of displays
- * @param int[8] array of pins {a, b, c, d, e, f, g, dot}
- * @param int* array of pins for each display
- * @param unsigned int Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
+ * @param displays Number of displays
+ * @param pins array of pins {a, b, c, d, e, f, g, dot}
+ * @param muxes array of common pin for each display
+ * @param Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
  */
 uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes, unsigned int freq) {
 	_freq = freq;
@@ -82,13 +86,13 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
 }
 
 /**
- * Constructor
+ * \brief Constructor
  *
- * @param unsigned char displays Number of displays
- * @param int[8] array of pins {a, b, c, d, e, f, g, dot}
- * @param int* array of pins for each display
- * @param unsigned int Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
- * @param bool common_anode Set true to change to common_anode displays
+ * @param displays Number of displays
+ * @param pins array of pins {a, b, c, d, e, f, g, dot}
+ * @param muxes array of common pin for each display
+ * @param Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
+ * @param common_anode Set true to change to common_anode displays
  */
 uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes, unsigned int freq, bool common_anode) {
 	_freq = freq;
@@ -99,9 +103,9 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
 
 
 /**
- * Sets a number
+ * \brief Sets a number to all displays
  *
- * @param int number to be setted
+ * @param number to be setted
  */
 void uSevenSegmentLib::set(long int number) {
 	long int _abs = abs(number);
@@ -130,9 +134,9 @@ void uSevenSegmentLib::set(long int number) {
 }
 
 /**
- * Gets stored number
+ * \brief Gets stored number
  *
- * @return int number in memory
+ * @return number in memory
  */
 long int uSevenSegmentLib::get() {
 	unsigned char i;
@@ -162,7 +166,9 @@ long int uSevenSegmentLib::get() {
 }
 
 /**
- * Gets stored number
+ * \brief Sets Zerofill on/off
+ *
+ * When enabled all leading digits are light as zero.
  *
  * @param bool zf If true, leading zeros will be displayed
  */
@@ -172,7 +178,7 @@ void uSevenSegmentLib::zeroFill(bool zf) {
 
 
 /**
- * Attach Timer2 interrupt
+ * \brief Attach timer interrupt
  *
  * Needed for usual operation, but you can call loop manually instead
  */
@@ -187,15 +193,20 @@ void uSevenSegmentLib::attachInterrupt() {
 
 
 /**
- * Main loop
+ * \brief Main public interrupt loop
  *
- * Refreshes all 8-segment digits
+ * Calls private loop
  */
 void uSevenSegmentLib::interrupt() {
 	_instance->_interrupt();
 }
 
 
+/**
+ * \brief Main private interrupt loop
+ *
+ * Refreshes all 8-segment digits
+ */
 void uSevenSegmentLib::_interrupt(void) {
 	digitalWrite(_muxes[_last], _onB); // In case of muxes, off works inverse
 
@@ -203,7 +214,7 @@ void uSevenSegmentLib::_interrupt(void) {
 		// _dot  and _minus included
 		unsigned char current = _values[_current];
 
-	/*
+	/* ALT method
 		digitalWrite(_pins[0], current & B10000000 xor _on);
 		digitalWrite(_pins[1], current & B01000000 xor _on);
 		digitalWrite(_pins[2], current & B00100000 xor _on);
@@ -225,5 +236,5 @@ void uSevenSegmentLib::_interrupt(void) {
 		digitalWrite(_muxes[_current], _offB);
 	}
 	_last = _current;
-	_current = (_current + 1) % _displays; // In case of muxes, off works inverse
+	_current = (_current + 1) % _displays;
 }
