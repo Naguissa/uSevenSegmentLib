@@ -14,7 +14,7 @@
  * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
  * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
  * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
- * @version 1.0.2
+ * @version 1.0.3
  */
 /** \file uSevenSegmentLib.h
  *   \brief uSevenSegmentLib header file
@@ -31,10 +31,10 @@
 	class uSevenSegmentLib {
 		public:
 			// Constructors
-			uSevenSegmentLib(unsigned char, int[8], int *);
-			uSevenSegmentLib(unsigned char, int[8], int *, unsigned int);
-			uSevenSegmentLib(unsigned char, int[8], int *, bool);
-			uSevenSegmentLib(unsigned char, int[8], int *, unsigned int, bool);
+			uSevenSegmentLib(const unsigned char, int[8], int *);
+			uSevenSegmentLib(const unsigned char, int[8], int *, unsigned int);
+			uSevenSegmentLib(const unsigned char, int[8], int *, bool);
+			uSevenSegmentLib(const unsigned char, int[8], int *, unsigned int, bool);
 
 			void set(long int);
 			long int get();
@@ -44,7 +44,8 @@
 
 			static void interrupt(void);
 
-			static uSevenSegmentLib *_instance;
+			static uSevenSegmentLib *instance;
+
 		private:
 			void _interrupt(void);
 

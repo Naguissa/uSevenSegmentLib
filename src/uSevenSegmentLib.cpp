@@ -14,7 +14,7 @@
  * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
  * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
  * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
- * @version 1.0.2
+ * @version 1.0.3
  */
 #include <Arduino.h>
 #include "uSevenSegmentLib.h"
@@ -22,7 +22,7 @@
 /**
  * \brief Static variable assignment to NULL
  */
-uSevenSegmentLib * uSevenSegmentLib::_instance = NULL;
+uSevenSegmentLib * uSevenSegmentLib::instance = NULL;
 
 
 /**
@@ -32,7 +32,7 @@ uSevenSegmentLib * uSevenSegmentLib::_instance = NULL;
  * @param pins array of pins {a, b, c, d, e, f, g, dot}
  * @param muxes array of common pin for each display
  */
-uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes) {
+uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes) {
 	_displays = displays;
 	unsigned char i;
 	for (i = 0; i < 8; i++) {
@@ -40,9 +40,9 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
 		pinMode(pins[i], OUTPUT);
 	}
 	// Get memory for all digits
-	_values = (unsigned char *) malloc(_displays);
+	_values = (unsigned char *) malloc(displays * sizeof(unsigned char));
 	// Get memory for all multiple displays muxes
-	_muxes = (int *) malloc(_displays);
+	_muxes = (int *) malloc(displays * sizeof(int));
 	for (i = 0; i < _displays; i++) {
 		_muxes[i] = muxes[i];
 		pinMode(muxes[i], OUTPUT);
@@ -57,7 +57,7 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
  * @param muxes array of common pin for each display
  * @param common_anode Set true to change to common_anode displays
  */
-uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes, bool common_anode) {
+uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, bool common_anode) {
 	if (common_anode) {
 		for (unsigned char i = 0; i < 10; i++) {
 			_mask[i] = _mask[i] xor B11111111;
@@ -80,7 +80,7 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
  * @param muxes array of common pin for each display
  * @param Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
  */
-uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes, unsigned int freq) {
+uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, unsigned int freq) {
 	_freq = freq;
 	uSevenSegmentLib(displays, pins, muxes);
 }
@@ -94,7 +94,7 @@ uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *mux
  * @param Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
  * @param common_anode Set true to change to common_anode displays
  */
-uSevenSegmentLib::uSevenSegmentLib(unsigned char displays, int pins[8], int *muxes, unsigned int freq, bool common_anode) {
+uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, unsigned int freq, bool common_anode) {
 	_freq = freq;
 	uSevenSegmentLib(displays, pins, muxes, common_anode);
 }
@@ -184,22 +184,23 @@ void uSevenSegmentLib::zeroFill(bool zf) {
  */
 void uSevenSegmentLib::attachInterrupt() {
 	extern uTimerLib TimerLib;
-	if (_instance == NULL) {
-		uSevenSegmentLib::_instance = this;
+	if (instance == NULL) {
+		instance = this;
 		unsigned long int period_us = 1000000 / _freq / _displays;
 		TimerLib.setInterval_us(uSevenSegmentLib::interrupt, period_us);
 	}
 }
-
 
 /**
  * \brief Main public interrupt loop
  *
  * Calls private loop
  */
+
 void uSevenSegmentLib::interrupt() {
-	_instance->_interrupt();
+	instance->_interrupt();
 }
+
 
 
 /**
