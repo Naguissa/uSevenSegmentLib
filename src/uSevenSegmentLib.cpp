@@ -14,7 +14,7 @@
  * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
  * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
  * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
- * @version 1.0.3
+ * @version 1.1.0
  */
 #include <Arduino.h>
 #include "uSevenSegmentLib.h"
@@ -31,33 +31,17 @@ uSevenSegmentLib * uSevenSegmentLib::instance = NULL;
  * @param displays Number of displays
  * @param pins array of pins {a, b, c, d, e, f, g, dot}
  * @param muxes array of common pin for each display
+ * @param freq Optional. Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
+ * @param common_anode Optional. Set true to change to common_anode displays
  */
-uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes) {
+uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, unsigned int freq = 40, bool common_anode = false) {
 	_displays = displays;
-	unsigned char i;
-	for (i = 0; i < 8; i++) {
-		_pins[i] = pins[i];
-		pinMode(pins[i], OUTPUT);
-	}
+	_freq = freq;
 	// Get memory for all digits
 	_values = (unsigned char *) malloc(displays * sizeof(unsigned char));
 	// Get memory for all multiple displays muxes
 	_muxes = (int *) malloc(displays * sizeof(int));
-	for (i = 0; i < _displays; i++) {
-		_muxes[i] = muxes[i];
-		pinMode(muxes[i], OUTPUT);
-	}
-}
-
-/**
- * \brief Constructor
- *
- * @param displays Number of displays
- * @param pins array of pins {a, b, c, d, e, f, g, dot}
- * @param muxes array of common pin for each display
- * @param common_anode Set true to change to common_anode displays
- */
-uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, bool common_anode) {
+    // Common anode? Invert values
 	if (common_anode) {
 		for (unsigned char i = 0; i < 10; i++) {
 			_mask[i] = _mask[i] xor B11111111;
@@ -68,38 +52,18 @@ uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], in
 		_offB = ~_offB;
 		_off = ~_off;
 	}
-	uSevenSegmentLib(displays, pins, muxes);
+	uint8_t i;
+	// Process pins
+	for (i = 0; i < 8; i++) {
+		_pins[i] = pins[i];
+		pinMode(pins[i], OUTPUT);
+	}
+	// Process muxes
+	for (i = 0; i < _displays; i++) {
+		_muxes[i] = muxes[i];
+		pinMode(muxes[i], OUTPUT);
+	}
 }
-
-
-/**
- * \brief Constructor
- *
- * @param displays Number of displays
- * @param pins array of pins {a, b, c, d, e, f, g, dot}
- * @param muxes array of common pin for each display
- * @param Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
- */
-uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, unsigned int freq) {
-	_freq = freq;
-	uSevenSegmentLib(displays, pins, muxes);
-}
-
-/**
- * \brief Constructor
- *
- * @param displays Number of displays
- * @param pins array of pins {a, b, c, d, e, f, g, dot}
- * @param muxes array of common pin for each display
- * @param Refresh frequency (for all digits, will be multiplied by digits to calculate end result)
- * @param common_anode Set true to change to common_anode displays
- */
-uSevenSegmentLib::uSevenSegmentLib(const unsigned char displays, int pins[8], int *muxes, unsigned int freq, bool common_anode) {
-	_freq = freq;
-	uSevenSegmentLib(displays, pins, muxes, common_anode);
-}
-
-
 
 
 /**
