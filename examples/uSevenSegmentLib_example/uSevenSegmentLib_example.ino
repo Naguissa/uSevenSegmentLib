@@ -1,10 +1,37 @@
 /**
  * Really tiny library to basic 7 segments displays
  *
+ *
  * Functionality example
  *
+ *
+ * *Segments in the display:*
+ *
+ *    -- a --
+ *   |       |
+ *   f       b
+ *   |       |
+ *    -- g --
+ *   |       |
+ *   e       c
+ *   |       |
+ *    -- d --  dot
+ *
+ * *Binary correspondence:*
+ *  
+ *  0b.gfedcba
+ *
+ * *Pins definition:*
+ *  
+ *  Same order as binary representation: {dot, g, f, e, d, c, b, a}
+ *
+ * *Muxes definition:*
+ *  
+ *  Left to right: {digit at left, digit at middle, digit at right....}
+ *
+ *
+ *
  * @see <a href="https://github.com/Naguissa/uSevenSegmentLib">https://github.com/Naguissa/uSevenSegmentLib</a>
- * @see <a href="https://github.com/Naguissa/uTimerLib">https://github.com/Naguissa/uTimerLib</a> - Needed dependecy
  * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
  * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
  */

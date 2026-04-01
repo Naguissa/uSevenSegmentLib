@@ -1,6 +1,7 @@
 # Arduino, ESP8266 and STM32 7-segment multiplexed displays library - uSevenSegmentLib #
 
-Master status:   [![Build Status](https://travis-ci.org/Naguissa/uSevenSegmentLib.svg?branch=master)](https://travis-ci.org/Naguissa/uSevenSegmentLib)
+Master status:  ![Arduino CI](https://github.com/Naguissa/uSevenSegmentLib/workflows/arduino_ci/badge.svg)
+
 
 
 ## What is this repository for? ##
