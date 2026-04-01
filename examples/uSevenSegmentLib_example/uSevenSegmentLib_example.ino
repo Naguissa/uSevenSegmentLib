@@ -68,7 +68,7 @@ void loop() {
 	i = (i + 1) % 256;
 	sevenSegments.set(i);
 	Serial.println((unsigned int) i);
-	led_status = ~led_status;
+	led_status = !led_status;
 	digitalWrite(LED_BUILTIN, led_status);
 }
 
