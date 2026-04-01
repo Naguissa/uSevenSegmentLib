@@ -12,14 +12,6 @@ It can work with only a display but it's intended to use more than one and drive
 
 If you want to use only one display you can do it without flickering, without using timers and using less code driving it directly.
 
-## Important: Dependencies ##
-
-This library requires uTimerLib libary; it's available on IDE Library Manager and also here:
-
-https://github.com/Naguissa/uTimerLib
-https://github.com/Naguissa/uTimerLib/releases
-
-
 
 ## How do I get set up? ##
 
@@ -56,16 +48,34 @@ Parameters:
 
 ### Set a value: ###
 
-void uSevenSegmentLib::set(long int number);
+**void uSevenSegmentLibObject.setInteger(long int number);**
 
 Parameters:
  - number: Number to display. It also accept negative numbers.
 
-### Start displaying: ###
+**void uSevenSegmentLibObject.setText(const char textArray[]);**
 
-void uSevenSegmentLib::attachInterrupt();
+Parameters:
+ - textArray: Char array with desired text. It will be scrolled if needed.
+ 
 
-Attaches internal timer interrupts to run multiplexed displays.
+### Interrupt: ###
+
+This library needs a constant call to refresh displays. It can be archieved using intyerrupts but also calling it from your "loop" function, if it's run very often.
+
+To call it in loop you can call:
+ * **void uSevenSegmentLibObject.interruptLoop();**
+
+
+You can use interrupts using:
+
+ * **static void uSevenSegmentLib::interrupt();**
+
+In this scenario you can use uTimerLib, https://github.com/Naguissa/uTimerLib
+
+	```TimerLib.setInterval_us(uSevenSegmentLib::interrupt, 10000);```
+
+
 
 
 ### Extra: Leading zero fill ###
@@ -73,29 +83,13 @@ Attaches internal timer interrupts to run multiplexed displays.
 void uSevenSegmentLib::zeroFill(bool zf);
 
 Parameters:
- - zf: If true, leading zeros will be displayed instead turning off that displays.
-
-
-
-## Typical usage: ##
-
- - You instantiate an object (usually a global scope object): uSevenSegmentLib sevenSegments(3, pins, muxes);
- - Then set any initial value on it on setup(): sevenSegments.set(0);
- - And attach interrupts to start working (still on setup()): sevenSegments.attachInterrupt();
- - Then, wherever you want, you can change displayed values at your will: sevenSegments.set(77);
-
+ - zf: If true, leading zeros will be displayed instead turning off that displays when numbers are shown.
 
 
 ## Examples ##
 
 Included on example folder, available on Arduino IDE.
 
- - Three 7-segments counter example, that counts from 0 to 255.
- - One example to test connections to a 7-segment module; lights sequently from "a" to "h" segments. This example doesn't use library functions.
-
-## Extra ##
-
-Look in extras folder for a typical pinout and
 
 ## Who do I talk to? ##
 
