@@ -49,6 +49,9 @@
 uSevenSegmentLib sevenSegments(3, pins, muxes);
 bool led_status = true;
 
+unsigned long lastTime = 0;
+unsigned long lastLedTime = 0;
+unsigned long actTime;
 
 int i = 0;
 
@@ -57,18 +60,22 @@ void setup() {
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, led_status);
 
-	sevenSegments.set(i);
-	sevenSegments.attachInterrupt();
+	sevenSegments.setInteger(i);
 }
 
 
 
 void loop() {
-	delay(1000);
-	i = (i + 1) % 256;
-	sevenSegments.set(i);
-	Serial.println((unsigned int) i);
-	led_status = !led_status;
-	digitalWrite(LED_BUILTIN, led_status);
+	sevenSegments.interruptLoop();
+	actTime = millis();
+	
+    if (lastTime + 1000 < actTime) {
+	    i = (i + 1) % 256;
+	    sevenSegments.setInteger(i);
+	    Serial.println((unsigned int) i);
+	    led_status = !led_status;
+	    digitalWrite(LED_BUILTIN, led_status);
+        lastTime = actTime;
+    }
 }
 

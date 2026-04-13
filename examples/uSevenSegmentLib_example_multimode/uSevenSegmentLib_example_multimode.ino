@@ -40,7 +40,7 @@
 
 #ifdef _VARIANT_ARDUINO_STM32_
 	int pins[8] = {D4, D5, D6, D7, D8, D9, D10, D11};
-	int muxes[3] = {D12, D13, D14};
+	int muxes[3] = {D12, D13};
 #else
 	int pins[8] = {2, 3, 4, 5, 6, 7, 8, 9};
 	int muxes[3] = {10, 11};
@@ -95,10 +95,10 @@ void loop() {
 	    if (lastTime + 30000 < actTime) {
 	        mode = 1;
 	        i = -110;
-					Serial.print("Loading number WITHOUT zerofill...");
+			Serial.print("Loading number WITHOUT zerofill...");
 	        sevenSegments.zeroFill(true);
 	        newNumber();
-					Serial.println(" ok");
+			Serial.println(" ok");
 	        lastTime = actTime;
         }
     }
@@ -110,10 +110,10 @@ void loop() {
 	    if (i > 110) {
 	        i = -110;
 	        mode = 2;
-					Serial.print("Loading number WITH zerofill...");
+			Serial.print("Loading number WITH zerofill...");
 	        sevenSegments.zeroFill(true);
 	        newNumber();
-					Serial.println(" ok");
+			Serial.println(" ok");
 	        lastTime = actTime;
         }
     
@@ -125,9 +125,9 @@ void loop() {
         }
 	    if (i > 110) {
 	        mode = 0;
-					Serial.print("Loading text...");
-					showTextMessage();
-					Serial.println(" ok");
+			Serial.print("Loading text...");
+			showTextMessage();
+			Serial.println(" ok");
 	        lastTime = millis();
         }
     }
