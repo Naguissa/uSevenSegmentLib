@@ -50,7 +50,6 @@ uSevenSegmentLib sevenSegments(3, pins, muxes);
 bool led_status = true;
 
 unsigned long lastTime = 0;
-unsigned long lastLedTime = 0;
 unsigned long actTime;
 
 int i = 0;
