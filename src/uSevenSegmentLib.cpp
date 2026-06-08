@@ -37,7 +37,7 @@
  * @see <a href="https://github.com/Naguissa/uactTimerLib">https://github.com/Naguissa/uactTimerLib</a> - Useful to use this library with a actTimer
  * @see <a href="https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html">https://www.foroelectro.net/librerias-arduino-ide-f29/usevensegmentlib-libreria-arduino-para-controlar-d-t193.html</a>
  * @see <a href="mailto:naguissa@foroelectro.net">naguissa@foroelectro.net</a>
- * @version 2.0.0
+ * @version 2.0.1
  */
 #include <Arduino.h>
 #include "uSevenSegmentLib.h"
@@ -95,7 +95,7 @@ uSevenSegmentLib::uSevenSegmentLib(const uint8_t displays, int pins[8], int muxe
 	// Process pins
 	for (i = 0; i < 8; i++) {
 		_pins[i] = pins[i];
-		pinMode(pins[i], OUTPUT);
+		pinMode(_pins[i], OUTPUT);
 		USEVENSEGMENTLIB_YIELD
 	}
 	// Process muxes
@@ -105,6 +105,10 @@ uSevenSegmentLib::uSevenSegmentLib(const uint8_t displays, int pins[8], int muxe
 		pinMode(_muxes[i], OUTPUT);
 		USEVENSEGMENTLIB_YIELD
 	}
+	// Internal delay to scroll screens
+    _loops_to_wait = 2000 / _delay_ms / _displays;
+    if (_loops_to_wait < 10) _loops_to_wait = 10;
+    USEVENSEGMENTLIB_YIELD
 }
 
 /**
@@ -225,33 +229,42 @@ void uSevenSegmentLib::setInteger(long int number) {
  * @param str to be set
  */
 void uSevenSegmentLib::setText(const char str[]) {
-    // We don't take in mind the dots. It would use few less memory if checked
-    _valuesLength = strlen(str);
-    uint8_t size = (_valuesLength < _displays ? _displays : _valuesLength);
-    _reserveMemory(size);
-
-	int i;
+	unsigned int i = 0;
+    unsigned int o = 0;
+    unsigned int len = 0;
     uint8_t current;
 
+	// strlen skipping commas and dots to save memory
+    for(; str[len]; len++) {
+        if (str[len] != '.' && str[len] != ',') o++;
+    }
+
+    // Reserve needed space for all text.
+    // If text is shorter than number of screens use this number as minimum size.
+    _valuesLength = o > 0 ? o : 0;
+    i = (_valuesLength < _displays ? _displays : _valuesLength);
+    _reserveMemory(i);
+return;
+
 	// Fill array with translated data
-	for (i = 0; i < _valuesLength; i++) {
+	for (i = 0, o = 0; i < len; o++) {
+	    current = uSevenSegmentLib::char2out(str[i]);
+	    i++;
 		// Check if next is a dot:
-		if (i+1 < _valuesLength && (_values[i+1] == '.'|| _values[i+1] == ',')) { // Comma as dot
-		    current = uSevenSegmentLib::char2out(str[i]) | USEVENSEGMENTLIB_DOT;
-		    _values[i] = USEVENSEGMENTLIB_EFFECTIVE(current);
+		if (i < _valuesLength && (str[i] == '.' || str[i] == ',')) { // Comma or dot
+		    current = current | USEVENSEGMENTLIB_DOT;
 		    i++;
-	    } else {
-		    current = uSevenSegmentLib::char2out(str[i]);
-		    _values[i] = USEVENSEGMENTLIB_EFFECTIVE(current);
-		}
+	    }
+	    _values[o] = USEVENSEGMENTLIB_EFFECTIVE(current);
 		USEVENSEGMENTLIB_YIELD
 	}
 	// Clean remaining  visible displays if str is shorter than displays
-	for (; i < size; i++) {
+	for (; o < _displays; o++) {
 	    current = USEVENSEGMENTLIB_ALL_OFF;
-	    _values[i] = USEVENSEGMENTLIB_EFFECTIVE(current);
+	    _values[o] = USEVENSEGMENTLIB_EFFECTIVE(current);
 		USEVENSEGMENTLIB_YIELD
 	}
+	// Reset display handling
 	_currentDisplay = 0;
 	_currentValue = 0;
 	_currentLoop = 0;
@@ -307,7 +320,7 @@ void uSevenSegmentLib::_interrupt(void) {
         return;
     }
 
-	digitalWrite(_muxes[_currentDisplay], _common_anode);
+	digitalWrite(_muxes[_currentDisplay], !_common_anode);
 	_currentDisplay = (_currentDisplay + 1) % _displays;
 
 	uint8_t current = _values[_currentValue + _currentDisplay];
@@ -320,73 +333,83 @@ void uSevenSegmentLib::_interrupt(void) {
 	digitalWrite(_pins[6], current & 0b00000010);
 	digitalWrite(_pins[7], current & 0b00000001);
 
-	digitalWrite(_muxes[_currentDisplay], !_common_anode);
-	
+	digitalWrite(_muxes[_currentDisplay], _common_anode);
 	_currentLoop++;
-	if (_valuesLength > _displays && _currentLoop > 2000 / _delay_ms / _displays) {
+	if (_valuesLength > _displays && _currentLoop > _loops_to_wait) {
 	    _currentLoop = 0;
 	    _currentValue = (_currentValue + 1) % (_valuesLength - _displays);
     }
 	
 }
 
-// In code to save RAM
-uint8_t uSevenSegmentLib::char2out(char in) {
-    // All to caps or 0-9 value
-    if (in >= 'a' && in <= 'z') in = in - 'a' + 'A';
-    else if (in >= '0' && in <= '9') in = in - '0';
-    
+// Resilve linker issue
+extern constexpr uint8_t uSevenSegmentLib::charTable[36];
+
+// In code and flash to save RAM
+uint8_t uSevenSegmentLib::char2out(uint8_t in) {
+    // Numeric values
+    if (in <= 9) return uSevenSegmentLib::charTable[in];
+    // Numbers in ASCII
+    if (in >= '0' && in <= '9') return uSevenSegmentLib::charTable[in - '0'];
+    // Common letters in ASCII
+    if (in >= 'a' && in <= 'z') return uSevenSegmentLib::charTable[in - 87];  // same as in = in - 'a' + 10
+    if (in >= 'A' && in <= 'Z') return uSevenSegmentLib::charTable[in - 55]; // same as in = in - 'A' + 10
+    // Add some ASCII symbols
     switch (in) {
-        case 0: return 0b00111111;
-        case 1:
-        case '!': return 0b00000110;
-        case 2:
-        case 'Z': return 0b01011011;
-        case 3: return 0b01001111;
-        case 4: return 0b01100110;
-        case 5: 
-        case 'S': return 0b01101101;
-        case 6: return 0b01111101;
-        case 7: return 0b00000111;
-        case 8: return 0b01111111;
-        case 9: return 0b01101111;
-        case 'A': return 0b01110111;
-        case 'B': return 0b01111100;
-        case 'C':
+        case 32: // space
+        case 255: // non-breaking space
+            return 0b00000000;  // space
+
+        case 33: // !
+        case 173: // ¡
+            return 0b00000110;  // same as 1
+        
+        case 34: return 0b00100010; // "
+
+        case 39: // '
+        case 96: // `
+        case 239: // '
+            return 0b00000010;
+    
+        case 40: // (
+        case 91: // [
+            return 0b00111001;
+            
+        case 41: // )
+        case 93: // ]
+            return 0b00001111;
+            
+        case 45: // -
+        case 126: // ~
+            return 0b01000000;
+
+        case 47: return 0b01010010; // / (slash)
+
+        case 58: // :
+        case 59: // ;
+            return 0b00001001;
+            
+        case 61: return 0b01001000; // =
+        case 92: return 0b01100100; // \ (backslash)
+        case 95: return 0b00001000; // _
+        
+        case 128: // Ç
         case 135: // ç
-        case 128: return 0b00111001; // Ç
-        case 'D': return 0b01011110;
-        case 'E': return 0b01111001;
-        case 'F': return 0b01110001;
-        case 'G': return 0b00111101;
-        case 'H':
-        case 'X': return 0b01110110;
-        case 'I': return 0b00110000;
-        case 'J': return 0b00011110;
-        case 'K': return 0b01110101;
-        case 'L': return 0b00111000;
-        case 'M': return 0b00110111;
-        case 'N': return 0b01010100;
+             return 0b00111001; // C
+
         case 164: // ñ
-        case 165: return 0b01010101; // Ñ
-        case 'O': return 0b01011100;
-        case 'P': return 0b01110011;
-        case 'Q': return 0b01100111;
-        case 'R': return 0b01010000;
-        case 'T': return 0b01111000;
-        case 'U': return 0b00111110;
-        case 'V': return 0b00011100;
-        case 'W': return 0b01101010;
-        case 'Y': return 0b01101110;
-        case '-': return 0b01000000;
-        case '_': return 0b00001000;
-        case 167: return 0b01100011; // º
-        case '/': return 0b01010010;
-        case ':': return 0b00001001;
-        case '=': return 0b01001000;
-        case ' ': return 0b00000000;
-//        case '?': return 0b01010011; // Default, commented
+        case 165: // Ñ
+             return 0b01010100; // N
+        
+        case 166: // ª
+        case 167: // º
+        case 248: // º (degree)
+            return 0b01100011;
+            
+        case 168: return 0b01011010; // ¿
     }
+
+    // Any other? Question mark
     return USEVENSEGMENTLIB_QUESTIONMARK;
 }
 

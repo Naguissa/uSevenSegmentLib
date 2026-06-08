@@ -43,10 +43,10 @@
 	int muxes[3] = {D12, D13};
 #else
 	int pins[8] = {2, 3, 4, 5, 6, 7, 8, 9};
-	int muxes[3] = {10, 11};
+	int muxes[4] = {10, 11, 12, 13};
 #endif
 
-uSevenSegmentLib sevenSegments(2, pins, muxes);
+uSevenSegmentLib sevenSegments(4, pins, muxes);
 
 bool led_status = true;
 char mode = 0;
@@ -92,18 +92,18 @@ void loop() {
     }
 	
     if (mode == 0) { // show text
-	    if (lastTime + 30000 < actTime) {
+	    if (lastTime + 75000 < actTime) {
 	        mode = 1;
 	        i = -110;
-			Serial.print("Loading number WITHOUT zerofill...");
+					Serial.print("Loading number WITHOUT zerofill...");
 	        sevenSegments.zeroFill(true);
 	        newNumber();
-			Serial.println(" ok");
+					Serial.println(" ok");
 	        lastTime = actTime;
         }
     }
     if (mode == 1) { // show number no zerofill
-	    if (lastTime + 750 < actTime) {
+	    if (lastTime + 500 < actTime) {
 	        newNumber();
 	        lastTime = actTime;
         }
@@ -119,7 +119,7 @@ void loop() {
     
     }
     if (mode == 2) { // show number zerofill
-	    if (lastTime + 750 < actTime) {
+	    if (lastTime + 500 < actTime) {
 	        newNumber();
 	        lastTime = actTime;
         }
@@ -132,4 +132,5 @@ void loop() {
         }
     }
 }
+
 
